@@ -1,5 +1,4 @@
 class Diff
-
   def self.sync(path1, path2)
     text1 = get_text(path1)
     text2 = get_text(path2)
@@ -8,7 +7,7 @@ class Diff
 
     result = combine(text1, text2, match_indexes)
 
-    difference = mark(get_text(path1), get_text(path2), result)
+    difference = mark(text1, text2, result)
 
     result.each_with_index do |line, index|
       puts "#{index + 1} #{difference[index]} #{line}"
@@ -45,20 +44,19 @@ class Diff
     m2 = match_indexes[1]
 
     (m2..(array2.size - 1)).each do |i|
-      if result[m1] == nil
+      if result[m1].nil?
         result.push(array2[i])
       elsif array2[i] != result[m1]
-      	result[m1] += "|#{array2[i]}"
+        result[m1] += "|#{array2[i]}"
       end
       m1 += 1
     end
-    
+
     m1 = match_indexes[0]
     (0..m2).each do |i|
-      
-      if result[m1] == nil
+      if result[m1].nil?
         result.push(array2[m2 - i])
-      elsif array2[m2-i] != result[m1]
+      elsif array2[m2 - i] != result[m1]
         result[m1] += "|#{array2[m2 - i]}"
       end
       m1 -= 1
@@ -69,7 +67,7 @@ class Diff
   def self.get_text(text_path)
     text = []
     File.open(text_path, 'r') do |f|
-      f.each_line {|line| text.push(line.gsub("\n", ''))}
+      f.each_line { |line| text.push(line.delete("\n")) }
     end
     text
   end
