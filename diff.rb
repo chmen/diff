@@ -1,14 +1,17 @@
 class Diff
 
-  def diff(first_path, second_path)
+  def self.sync(path1, path2)
+    text1 = get_text(path1)
+    text2 = get_text(path2)
 
-  end
+    match_indexes = match(text1, text2)
 
-  def self.sync(array1, array2)
-    array1.each do |a1|
-      array2.each do |a2|
-        #return array1.index(a1) if a1 == a2 && Diff.second_match(array1.index(array1, array2, a1, a2)
-      end
+    result = combine(text1, text2, match_indexes)
+
+    difference = mark(get_text(path1), get_text(path2), result)
+
+    result.each_with_index do |line, index|
+      puts "#{index + 1} #{difference[index]} #{line}"
     end
   end
 
@@ -20,16 +23,24 @@ class Diff
     end
   end
 
-  def numerate
-
-  end
-
-  def mark(array1, result)
-    
+  def self.mark(array1, array2, result)
+    difference = []
+    result.each do |line|
+      if array1.include?(line) && array2.include?(line)
+        difference.push(' ')
+      elsif array1.include?(line) && !array2.include?(line)
+        difference.push('-')
+      elsif !array1.include?(line) && array2.include?(line)
+        difference.push('+')
+      elsif line.include?('|')
+        difference.push('*')
+      end
+    end
+    difference
   end
 
   def self.combine(array1, array2, match_indexes)
-    result = array1
+    result = Array.new(array1)
     m1 = match_indexes[0]
     m2 = match_indexes[1]
 
@@ -63,3 +74,5 @@ class Diff
     text
   end
 end
+
+Diff.sync('1.txt', '2.txt')
